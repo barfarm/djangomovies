@@ -22,6 +22,11 @@ class Director(models.Model):
     def __str__(self):
         return f"{self.name}  {self.surname} from {self.country}"
 
+class Country(models.Model):
+    name=models.CharField(max_length=20,null=True)
+    def __str__(self):
+        return self.name
+
 
 class Movie(models.Model):
     title=models.CharField(max_length=100)
@@ -32,6 +37,7 @@ class Movie(models.Model):
     created = models.DateTimeField(auto_now_add=True,null=True)
     genre=models.ForeignKey(Genre,null=True,on_delete=models.SET_NULL)
     director=models.ForeignKey(Director,null=True,on_delete=models.SET_NULL)
+    countrys=models.ManyToManyField(Country,related_name='Movie')
 
     class Meta:
         unique_together=("title","released","director")
