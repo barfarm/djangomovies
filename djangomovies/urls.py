@@ -18,6 +18,10 @@ from django.urls import path
 from core.views import hello
 
 
+# from core.models import Movie
+#
+# admin.site.register(Movie)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/',hello),
