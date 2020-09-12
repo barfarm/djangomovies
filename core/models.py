@@ -3,10 +3,12 @@ from django.db import models
 # Create your models here.
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-age_chs=[(0,0),(6,6),(12,12),(15,15),(18,18)]
+from model_utils import Choices
+age_chs=Choices((0,"kids","kids"),(1,"teens","teens"),(2,"adults","adults"))
+
 class Genre(models.Model):
     name=models.CharField(max_length=20,unique=True)
-    age_limit=models.IntegerField(choices=age_chs)
+    age_limit=models.IntegerField(blank=True, null=True,choices=age_chs)
 
     def __str__(self):
         return self.name

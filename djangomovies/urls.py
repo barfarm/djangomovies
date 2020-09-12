@@ -15,14 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import hello
+from core.views import hello,MovieView, MovieCreateView
 
 
-# from core.models import Movie
-#
+
+from core.models import Movie
+
 # admin.site.register(Movie)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/',hello),
+    path("",MovieView.as_view(),name='index'),
+    path('movie/create',MovieCreateView.as_view(success_url='create'),name='movie_create'),
 ]
