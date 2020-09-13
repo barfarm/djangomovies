@@ -8,23 +8,77 @@ from django.shortcuts import render
 from django import views
 from django.shortcuts import  render
 from core.models import Movie, age_chs
-from django.views.generic import TemplateView, ListView, FormView
+from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView, DeleteView, DetailView
 
+from django.urls import reverse_lazy
+import logging
+
+logging.basicConfig(
+    filemode='w',
+                    filename='log.txt',
+                    level=logging.INFO
+                    )
+LOGGER=logging.getLogger(__name__)
 from core.forms import MovieForm
 from core.models import Movie
 
-class MovieCreateView (FormView):
-    template_name = 'form.html'
-    form_class=MovieForm
-
-class MovieView(ListView):
-    template_name='movies.html'
+# class MovieCreateView (FormView):
+#     template_name = 'form.html'
+#     form_class=MovieForm
+class MovieListView(ListView):
+    template_name = 'movie_list.html'
     model=Movie
 
-    def get_context_data(self,**kwargs):
-        contex=super().get_context_data(**kwargs)
-        contex['age_limits']=age_chs
-        return contex
+class MovieDetailView(DetailView):
+    template_name = 'movie_detail.html'
+    model=Movie
+
+class MovieDeleteView(DeleteView):
+    template_name = 'movie_confirm_delete.html'
+    model=Movie
+    success_url= reverse_lazy("core:movie_list")
+
+class IndexView(MovieListView):
+    template_name = 'index.html'
+
+class MovieCreateView(CreateView):
+    title='Add Movie'
+    template_name = 'form.html'
+    form_class = MovieForm
+    success_url= reverse_lazy("core:movie_list")
+
+
+    def form_invalid(self,form):
+        LOGGER.warning('Invalid data provided.')
+        return super().form_invalid(form)
+
+    def post(self, request, *args, **kwargs):
+        result=super().post(request,*args,**kwargs)
+        if title := request._post.get('title'):
+            LOGGER.info(f'Successfully added new movie: {title}')
+        # LOGGER.info(f" Created movie {request._post['title']} ")
+        return result
+
+class MovieUpdateView(UpdateView):
+    template_name = 'form.html'
+    model=Movie
+    form_class = MovieForm
+    success_url= reverse_lazy('core:movie_list')
+
+    def form_invalid(self,form):
+        LOGGER.warning('Invalid data provided.')
+        return super().form_invalid(form)
+
+
+
+# class MovieView(ListView):
+#     template_name='movies.html'
+#     model=Movie
+#
+#     def get_context_data(self,**kwargs):
+#         contex=super().get_context_data(**kwargs)
+#         contex['age_limits']=age_chs
+#         return contex
 
 
 
@@ -41,6 +95,7 @@ class MovieView(ListView):
 #         )
 
 def hello(request):
+    LOGGER.info('wreszcie dziala')
     return render(
         request,
         template_name="hello.html",
