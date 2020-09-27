@@ -9,9 +9,14 @@ from django import views
 from django.shortcuts import  render
 from core.models import Movie, age_chs
 from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView, DeleteView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+import logging
+from django.shortcuts import render
 
 from django.urls import reverse_lazy
-import logging
+
+from core.forms import MovieForm
+from core.models import Movie
 
 logging.basicConfig(
     filemode='w',
@@ -22,10 +27,13 @@ LOGGER=logging.getLogger(__name__)
 from core.forms import MovieForm
 from core.models import Movie
 
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
 # class MovieCreateView (FormView):
 #     template_name = 'form.html'
 #     form_class=MovieForm
-class MovieListView(ListView):
+class MovieListView(LoginRequiredMixin,ListView,StaffRequiredMixin):
     template_name = 'movie_list.html'
     model=Movie
 
@@ -33,15 +41,15 @@ class MovieDetailView(DetailView):
     template_name = 'movie_detail.html'
     model=Movie
 
-class MovieDeleteView(DeleteView):
+class MovieDeleteView(LoginRequiredMixin,DeleteView,StaffRequiredMixin):
     template_name = 'movie_confirm_delete.html'
     model=Movie
     success_url= reverse_lazy("core:movie_list")
 
-class IndexView(MovieListView):
-    template_name = 'index.html'
+# class IndexView(MovieListView):
+#     template_name = 'index.html'
 
-class MovieCreateView(CreateView):
+class MovieCreateView(LoginRequiredMixin,CreateView,StaffRequiredMixin):
     title='Add Movie'
     template_name = 'form.html'
     form_class = MovieForm
@@ -59,7 +67,8 @@ class MovieCreateView(CreateView):
         # LOGGER.info(f" Created movie {request._post['title']} ")
         return result
 
-class MovieUpdateView(UpdateView):
+
+class MovieUpdateView(LoginRequiredMixin,UpdateView,StaffRequiredMixin):
     template_name = 'form.html'
     model=Movie
     form_class = MovieForm

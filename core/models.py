@@ -39,7 +39,7 @@ class Movie(models.Model):
     created = models.DateTimeField(auto_now_add=True,null=True)
     genre=models.ForeignKey(Genre,null=True,on_delete=models.SET_NULL)
     director=models.ForeignKey(Director,null=True,on_delete=models.SET_NULL)
-    countrys=models.ManyToManyField(Country,related_name='movie')
+    countries=models.ManyToManyField(Country,related_name='movie')
 
     # def printcountry(self.country):
     #     for c in self.country:

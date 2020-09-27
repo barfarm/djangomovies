@@ -11,7 +11,7 @@ def movie_format(movie,short=False):
     return f'{movie.title}({movie.released.year})-{movie.genre}'
 
 @register.filter
-def att_as_f(obj,attrname):
+def attr_as_p(obj, attrname):
     label=escape(attrname.capitalize())
     value=escape(getattr(obj, attrname))
     return SafeString(f'<p><strong>{label}:</strong> {value}</p>')

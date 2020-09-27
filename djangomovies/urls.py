@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from core.views import hello, IndexView, MovieCreateView, MovieUpdateView,MovieDeleteView
-
+from core.views import hello, MovieCreateView, MovieUpdateView,MovieDeleteView
+from .views import IndexView
 
 
 from core.models import Movie
@@ -29,4 +29,5 @@ urlpatterns = [
     # path("",MovieView.as_view(),name='index'),
     path('',IndexView.as_view(),name="index"),
     path('core/',include('core.urls',namespace='core')),
+    path('accounts/',include('accounts.urls',namespace='accounts')),
 ]
